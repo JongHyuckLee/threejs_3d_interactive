@@ -9,7 +9,8 @@ export default function example() {
   const canvas = document.querySelector("#three-canvas");
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
+  // renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
   console.log(window.devicePixelRatio);
   const scene = new THREE.Scene();
 
