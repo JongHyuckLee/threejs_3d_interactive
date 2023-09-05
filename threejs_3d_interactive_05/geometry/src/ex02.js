@@ -38,7 +38,15 @@ export default function example() {
 
   // Mesh
   const geometry = new THREE.SphereGeometry(5, 64, 64);
-  console.log(geometry.attributes.position.array);
+  const positionArray = geometry.attributes.position.array;
+
+  for (let i = 0; i < positionArray.length; i += 3) {
+    // 정점(Vertext) 한 개의 x, y, z 좌표를 랜덤으로 조정
+    positionArray[i] = positionArray[i] + (Math.random() - 0.5) * 0.2;
+    positionArray[i + 1] = positionArray[i + 1] + (Math.random() - 0.5) * 0.2;
+    positionArray[i + 2] = positionArray[i + 2] + (Math.random() - 0.5) * 0.2;
+  }
+
   const material = new THREE.MeshStandardMaterial({
     color: "orangered",
     side: THREE.DoubleSide,
