@@ -37,16 +37,8 @@ export default function example() {
   scene.add(directionalLight);
 
   // Mesh
-  const geometry = new THREE.SphereGeometry(5, 64, 64);
-  const positionArray = geometry.attributes.position.array;
-
-  for (let i = 0; i < positionArray.length; i += 3) {
-    // 정점(Vertext) 한 개의 x, y, z 좌표를 랜덤으로 조정
-    positionArray[i] = positionArray[i] + (Math.random() - 0.5) * 0.2;
-    positionArray[i + 1] = positionArray[i + 1] + (Math.random() - 0.5) * 0.2;
-    positionArray[i + 2] = positionArray[i + 2] + (Math.random() - 0.5) * 0.2;
-  }
-
+  // const geometry = new THREE.SphereGeometry(5, 64, 64);
+  const geometry = new THREE.PlaneGeometry(10, 10, 32, 32);
   const material = new THREE.MeshStandardMaterial({
     color: "orangered",
     side: THREE.DoubleSide,
@@ -55,6 +47,25 @@ export default function example() {
   });
   const sphere = new THREE.Mesh(geometry, material);
   scene.add(sphere);
+
+  const positionArray = geometry.attributes.position.array;
+
+  const randomArray = [];
+  for (let i = 0; i < positionArray.length; i += 3) {
+    // 정점(Vertext) 한 개의 x, y, z 좌표를 랜덤으로 조정
+    // positionArray[i] = positionArray[i] + (Math.random() - 0.5) * 0.2;
+    // positionArray[i + 1] = positionArray[i + 1] + (Math.random() - 0.5) * 0.2;
+    // positionArray[i + 2] = positionArray[i + 2] + (Math.random() - 0.5) * 0.2;
+
+    positionArray[i] += (Math.random() - 0.5) * 0.2;
+    positionArray[i + 1] += (Math.random() - 0.5) * 0.2;
+    positionArray[i + 2] += (Math.random() - 0.5) * 0.2;
+
+    randomArray[i] = (Math.random() - 0.5) * 0.2;
+    randomArray[i + 1] = (Math.random() - 0.5) * 0.2;
+    randomArray[i + 2] = (Math.random() - 0.5) * 0.2;
+  }
+
   // 그리기
   const clock = new THREE.Clock();
 
@@ -62,7 +73,11 @@ export default function example() {
     const time = clock.getElapsedTime() * 3;
     for (let i = 0; i < positionArray.length; i += 3) {
       // 변하는 값을 set 해주어야 한다.
-      positionArray[i] += Math.sign(time) * 0.002;
+      // console.log(i, Math.sin(time + randomArray[i] * 100));
+      // console.log(i, positionArray[i]);
+      positionArray[i] += Math.sin(time + randomArray[i] * 100) * 0.002;
+      positionArray[i + 1] += Math.sin(time + randomArray[i + 1] * 100) * 0.002;
+      positionArray[i + 2] += Math.sin(time + randomArray[i + 2] * 100) * 0.002;
     }
     geometry.attributes.position.needsUpdate = true;
     renderer.render(scene, camera);
