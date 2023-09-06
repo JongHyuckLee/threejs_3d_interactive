@@ -59,8 +59,12 @@ export default function example() {
   const clock = new THREE.Clock();
 
   function draw() {
-    const delta = clock.getDelta();
-
+    const time = clock.getElapsedTime() * 3;
+    for (let i = 0; i < positionArray.length; i += 3) {
+      // 변하는 값을 set 해주어야 한다.
+      positionArray[i] += Math.sign(time) * 0.002;
+    }
+    geometry.attributes.position.needsUpdate = true;
     renderer.render(scene, camera);
     renderer.setAnimationLoop(draw);
   }
