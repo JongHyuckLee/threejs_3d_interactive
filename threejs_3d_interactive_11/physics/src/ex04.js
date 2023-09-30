@@ -1,8 +1,9 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as CANNON from "cannon-es";
+import { PreventDragClick } from "./PreventDragClick";
 
-// ----- 주제: 물리가 적용되는 객체 만들기
+// ----- 주제: Force
 
 // cannon.js 문서
 // http://schteppe.github.io/cannon.js/docs/
@@ -10,14 +11,17 @@ import * as CANNON from "cannon-es";
 
 export default function example() {
   // Renderer
+
   const canvas = document.querySelector("#three-canvas");
+  const preventDragClick = new PreventDragClick(canvas);
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: true,
   });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
-
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   // Scene
   const scene = new THREE.Scene();
 
@@ -39,6 +43,7 @@ export default function example() {
   const directionalLight = new THREE.DirectionalLight("white", 1);
   directionalLight.position.x = 1;
   directionalLight.position.z = 2;
+  directionalLight.castShadow = true;
   scene.add(directionalLight);
 
   // Controls
@@ -48,22 +53,34 @@ export default function example() {
   const cannonWorld = new CANNON.World();
   cannonWorld.gravity.set(0, -9.8, 0);
 
+  // Contact Material
+  const defaultMaterial = new CANNON.Material("default");
+
+  const defaultContactMaterial = new CANNON.ContactMaterial(
+    defaultMaterial,
+    defaultMaterial,
+    { friction: 0.5, restitution: 0.3 }
+  );
+  cannonWorld.defaultContactMaterial = defaultContactMaterial;
+
   const floorShape = new CANNON.Plane();
   const floorBody = new CANNON.Body({
     mass: 0,
     position: new CANNON.Vec3(0, 0, 0),
     shape: floorShape,
+    material: defaultMaterial,
   });
   floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(-1, 0, 0), Math.PI / 2);
   cannonWorld.addBody(floorBody);
 
-  const boxShape = new CANNON.Box(new CANNON.Vec3(0.25, 2.5, 0.25)); // 메쉬의 절반 크기이다.
-  const boxBody = new CANNON.Body({
+  const sphereShape = new CANNON.Sphere(0.5); // 메쉬의 절반 크기이다.
+  const sphereBody = new CANNON.Body({
     mass: 1,
     position: new CANNON.Vec3(0, 10, 0),
-    shape: boxShape,
+    shape: sphereShape,
+    material: defaultMaterial,
   });
-  cannonWorld.addBody(boxBody);
+  cannonWorld.addBody(sphereBody);
 
   // Mesh
   const floorMesh = new THREE.Mesh(
@@ -73,15 +90,17 @@ export default function example() {
     })
   );
   floorMesh.rotation.x = -Math.PI / 2;
+  floorMesh.receiveShadow = true;
   scene.add(floorMesh);
 
-  const boxGeometry = new THREE.BoxGeometry(0.5, 5, 0.5);
-  const boxMaterial = new THREE.MeshStandardMaterial({
+  const sphereGeometry = new THREE.SphereGeometry(0.5);
+  const sphereMaterial = new THREE.MeshStandardMaterial({
     color: "seagreen",
   });
-  const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
-  boxMesh.position.y = 0.5;
-  scene.add(boxMesh);
+  const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  sphereMesh.position.y = 0.5;
+  sphereMesh.castShadow = true;
+  scene.add(sphereMesh);
 
   // 그리기
   const clock = new THREE.Clock();
@@ -94,8 +113,16 @@ export default function example() {
       cannonStepTime = 1 / 120;
     }
 
-    boxMesh.position.copy(boxBody.position); // 위치
-    boxMesh.quaternion.copy(boxBody.quaternion); // 회전
+    sphereMesh.position.copy(sphereBody.position); // 위치
+    sphereMesh.quaternion.copy(sphereBody.quaternion); // 회전
+
+    // 속도 감소
+    sphereBody.velocity.x *= 0.98;
+    sphereBody.velocity.y *= 0.98;
+    sphereBody.velocity.z *= 0.98;
+    sphereBody.angularVelocity.x *= 0.98;
+    sphereBody.angularVelocity.y *= 0.98;
+    sphereBody.angularVelocity.z *= 0.98;
 
     cannonWorld.step(1 / 60, delta, 3);
     renderer.render(scene, camera);
@@ -111,6 +138,18 @@ export default function example() {
 
   // 이벤트
   window.addEventListener("resize", setSize);
+  canvas.addEventListener("click", () => {
+    if (preventDragClick.mouseMoved) {
+      return;
+    }
+    sphereBody.velocity.x = 0;
+    sphereBody.velocity.y = 0;
+    sphereBody.velocity.z = 0;
+    sphereBody.angularVelocity.x = 0;
+    sphereBody.angularVelocity.y = 0;
+    sphereBody.angularVelocity.z = 0;
+    sphereBody.applyForce(new CANNON.Vec3(-100, 0, 0), sphereBody.position);
+  });
 
   draw();
 }
