@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-// ----- 주제: 랜덤 파티클
+// ----- 주제: 파티클 이미지
 
 export default function example() {
   // Renderer
@@ -48,9 +48,18 @@ export default function example() {
     positions[i] = (Math.random() - 0.5) * 10;
   }
   geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+  // 이미지로드
+  const textureLoader = new THREE.TextureLoader();
+  const particleTexture = textureLoader.load("/images/star.png");
+
   const material = new THREE.PointsMaterial({
-    size: 0.03,
-    color: "plum",
+    size: 0.3,
+    map: particleTexture,
+    // 파티클 이미지를 투명하게 세팅
+    transparent: true,
+    alphaMap: particleTexture,
+    depthWrite: false,
   });
 
   const particles = new THREE.Points(geometry, material);
