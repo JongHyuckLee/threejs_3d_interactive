@@ -23,6 +23,7 @@ export class Domino {
       this.modelMesh = glb.scene.children[0];
       this.modelMesh.name = `${this.index}번 도미노`;
       this.modelMesh.castShadow = true;
+
       this.modelMesh.position.set(this.x, this.y, this.z);
       this.scene.add(this.modelMesh);
 
@@ -43,6 +44,8 @@ export class Domino {
       new Vec3(0, 1, 0), // y축
       this.rotationY
     );
+
+    this.modelMesh.cannonBody = this.cannonBody;
     this.cannonWorld.addBody(this.cannonBody);
   }
 }
