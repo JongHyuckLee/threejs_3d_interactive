@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { ImagePanel } from "./ImagePanel";
 
-// ----- 주제: 형태가 바뀌는 이미지 패널 만들기 1
+// ----- 주제: 형태가 바뀌는 이미지 패널 만들기 2
 
 export default function example() {
   // Renderer
@@ -42,13 +42,12 @@ export default function example() {
   controls.enableDamping = true;
 
   // Mesh
-  const planeGeometry = THREE.PlaneGeometry(0.3, 0.3);
+  const planeGeometry = new THREE.PlaneGeometry(0.3, 0.3);
 
   // Points
   const SphereGeometry = new THREE.SphereGeometry(1, 8, 8);
   const positionArray = SphereGeometry.attributes.position.array;
   // console.log(SphereGeometry.attributes.position.array);
-
   const textureLoader = new THREE.TextureLoader();
   // 여러개의 Plane Mesh 생성
   let imagePanel = null;
