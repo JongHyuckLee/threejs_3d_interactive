@@ -41,9 +41,13 @@ export default function example() {
   controls.enableDamping = true;
 
   // Mesh
-  const planeGeometry = new THREE.PlaneGeometry(0.3, 0.3);
-
-  const textureLoader = new THREE.TextureLoader();
+  const planeMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.3, 0.3),
+    new THREE.MeshBasicMaterial({
+      color: "red",
+      side: THREE.DoubleSide,
+    })
+  );
 
   // Points
   const SphereGeometry = new THREE.SphereGeometry(1, 8, 8);
@@ -51,16 +55,16 @@ export default function example() {
   // console.log(SphereGeometry.attributes.position.array);
 
   // 여러개의 Plane Mesh 생성
-  let imagePanel = null;
+  let plane = null;
   for (let i = 0; i < positionArray.length; i += 3) {
-    imagePanel = new ImagePanel({
-      textureLoader,
-      scene,
-      geometry: planeGeometry,
-      imageSrc: `/images/${Math.ceil(Math.random() * 5)}.jpg`,
-      x: positionArray[i],
-      y: positionArray[i + 1],
-    });
+    plane = planeMesh.clone();
+    plane.position.x = positionArray[i];
+    plane.position.y = positionArray[i + 1];
+    plane.position.z = positionArray[i + 2];
+
+    plane.lookAt(0, 0, 0);
+
+    scene.add(plane);
   }
 
   // 그리기
