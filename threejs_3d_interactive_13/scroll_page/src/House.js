@@ -9,7 +9,6 @@ export class House {
       this.mesh = glb.scene.children[0];
       this.mesh.castShadow = true;
       this.mesh.position.set(this.x, this.height / 2, this.z);
-
       info.scene.add(this.mesh);
     });
   }

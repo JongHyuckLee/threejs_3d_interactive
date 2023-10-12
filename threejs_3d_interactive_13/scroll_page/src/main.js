@@ -31,23 +31,20 @@ camera.position.set(-5, 2, 25);
 scene.add(camera);
 
 // Light
-const ambientLight = new THREE.AmbientLight("white", 0.6);
-ambientLight.position.set(0, 3, 0);
 
+const ambientLight = new THREE.AmbientLight("white", 0.5);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight("white", 3);
-const directionalLightHelper = new THREE.DirectionalLightHelper(
-  directionalLight
-);
-directionalLight.position.set(0, 150, 100);
-directionalLight.castShadow = true;
-directionalLight.shadow.mapSize.width = 1024;
-directionalLight.shadow.mapSize.height = 1024;
-directionalLight.shadow.camera.near = 1;
-directionalLight.shadow.camera.far = 200;
-scene.add(directionalLight);
-scene.add(directionalLightHelper);
+const spotLight = new THREE.SpotLight("white", 10000);
+spotLight.position.set(0, 150, 100);
+spotLight.castShadow = true;
+spotLight.shadow.mapSize.width = 1024;
+spotLight.shadow.mapSize.height = 1024;
+spotLight.shadow.camera.near = 1;
+spotLight.shadow.camera.far = 200;
+const spotLightHelper = new THREE.SpotLightHelper(spotLight);
+scene.add(spotLightHelper);
+scene.add(spotLight);
 
 const gltfLoader = new GLTFLoader();
 
@@ -71,6 +68,47 @@ houses.push(
     height: 2,
   })
 );
+houses.push(
+  new House({
+    gltfLoader,
+    scene,
+    modelSrc: "/models/house.glb",
+    x: 7,
+    z: 10,
+    height: 2,
+  })
+);
+houses.push(
+  new House({
+    gltfLoader,
+    scene,
+    modelSrc: "/models/house.glb",
+    x: -10,
+    z: 0,
+    height: 2,
+  })
+);
+
+houses.push(
+  new House({
+    gltfLoader,
+    scene,
+    modelSrc: "/models/house.glb",
+    x: 10,
+    z: -10,
+    height: 2,
+  })
+);
+houses.push(
+  new House({
+    gltfLoader,
+    scene,
+    modelSrc: "/models/house.glb",
+    x: -5,
+    z: -20,
+    height: 2,
+  })
+);
 
 const clock = new THREE.Clock();
 function draw() {
@@ -78,6 +116,20 @@ function draw() {
 
   renderer.render(scene, camera);
   renderer.setAnimationLoop(draw);
+}
+let currentSection = 0;
+function setSection() {
+  // console.log(Math.round(window.scrollY / window.innerHeight));
+  const newSection = Math.round(window.scrollY / window.innerHeight);
+  if (currentSection !== newSection) {
+    currentSection = newSection;
+    const house = houses[currentSection];
+    gsap.to(camera.position, {
+      duration: 1,
+      x: house.x,
+      z: house.z + 5,
+    });
+  }
 }
 
 function setSize() {
@@ -88,7 +140,7 @@ function setSize() {
 }
 
 // 이벤트
-
+window.addEventListener("scroll", setSection);
 window.addEventListener("resize", setSize);
 
 draw();
