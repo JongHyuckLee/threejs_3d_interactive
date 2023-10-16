@@ -1,5 +1,5 @@
 import { Mesh } from "three";
-import { Stuff } from "./\bStuff";
+import { Stuff } from "./Stuff";
 import { cm1, geo, mat } from "./common";
 
 export class Floor extends Stuff {

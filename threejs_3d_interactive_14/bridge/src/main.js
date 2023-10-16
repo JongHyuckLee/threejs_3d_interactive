@@ -5,6 +5,7 @@ import { Pillar } from "./Pillar";
 import { Floor } from "./Floor";
 import { Bar } from "./Bar";
 import { SideLight } from "./SideLight";
+import { Glass } from "./\bGlass";
 
 // ----- 주제: The Bridge 게임 만들기
 
@@ -70,6 +71,8 @@ controls.enableDamping = true;
 
 // 물체 만들기
 const glassUnitSize = 1.2;
+const numberOfGlass = 10; // 유리판 개수
+
 // 바닥
 const floor = new Floor({
   name: "floor",
@@ -128,6 +131,36 @@ for (let i = 0; i < 49; i++) {
     name: "sideLight",
     container: bar4.mesh,
     z: i * 0.5 - glassUnitSize * 10, // glass unit size 10개보다 z축으로 - 된 값 부터 시작해야 한다. 글래스가 10개이기 때문이다.,
+  });
+}
+
+// 유리판
+let glassTypeNumber = 0;
+let glassTypes = [];
+for (let i = 0; i < numberOfGlass; i++) {
+  glassTypeNumber = Math.round(Math.random());
+
+  switch (glassTypeNumber) {
+    case 0:
+      glassTypes = ["normal", "strong"];
+      break;
+    case 1:
+      glassTypes = ["strong", "normal"];
+      break;
+  }
+  const glass1 = new Glass({
+    name: `glass-${glassTypes[0]}`,
+    x: -1,
+    y: 10.5,
+    z: i * glassUnitSize * 2 - 9 * glassUnitSize,
+    type: glassTypes[0],
+  });
+  const glass2 = new Glass({
+    name: `glass-${glassTypes[1]}`,
+    x: 1,
+    y: 10.5,
+    z: i * glassUnitSize * 2 - 9 * glassUnitSize,
+    type: glassTypes[1],
   });
 }
 
