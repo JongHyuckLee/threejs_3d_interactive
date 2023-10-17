@@ -5,7 +5,8 @@ import { Pillar } from "./Pillar";
 import { Floor } from "./Floor";
 import { Bar } from "./Bar";
 import { SideLight } from "./SideLight";
-import { Glass } from "./\bGlass";
+import { Glass } from "./Glass";
+import { Player } from "./Player";
 
 // ----- 주제: The Bridge 게임 만들기
 
@@ -39,6 +40,8 @@ cm1.scene.add(ambientLight);
 const spotLightDistance = 50;
 const spotLight1 = new THREE.SpotLight(cm2.lightColor, 100000);
 spotLight1.castShadow = true;
+spotLight1.shadow.mapSize.width = 2048;
+spotLight1.shadow.mapSize.height = 2048;
 const spotLight2 = spotLight1.clone();
 const spotLight3 = spotLight1.clone();
 const spotLight4 = spotLight1.clone();
@@ -164,11 +167,24 @@ for (let i = 0; i < numberOfGlass; i++) {
   });
 }
 
+// 플레이어
+const player = new Player({
+  name: "player",
+  x: 0,
+  y: 10.9,
+  z: 13,
+  rotationY: Math.PI,
+});
+
 // 그리기
 const clock = new THREE.Clock();
 
 function draw() {
   const delta = clock.getDelta();
+
+  if (cm1.mixer) {
+    cm1.mixer.update(delta);
+  }
 
   controls.update();
 
