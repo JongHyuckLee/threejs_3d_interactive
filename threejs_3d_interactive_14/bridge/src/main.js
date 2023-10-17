@@ -13,7 +13,7 @@ import { Player } from "./Player";
 // Renderer
 const canvas = document.querySelector("#three-canvas");
 const renderer = new THREE.WebGLRenderer({
-  canvas: cm1.canvas,
+  canvas,
   antialias: true,
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -176,6 +176,10 @@ const player = new Player({
   rotationY: Math.PI,
 });
 
+// Raycaster
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
 // 그리기
 const clock = new THREE.Clock();
 
@@ -199,7 +203,27 @@ function setSize() {
   renderer.render(cm1.scene, camera);
 }
 
+function checkClickedObject(objectName) {
+  if (objectName.indexOf("glass") >= 0) {
+  }
+}
+
+function checkIntersects() {
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(cm1.scene.children);
+
+  for (const item of intersects) {
+    checkClickedObject(item.object.name);
+    break;
+  }
+}
+
 // 이벤트
 window.addEventListener("resize", setSize);
+canvas.addEventListener("click", (e) => {
+  mouse.x = (e.clientX / canvas.clientWidth) * 2 - 1;
+  mouse.y = -((e.clientY / canvas.clientHeight) * 2 - 1);
+  checkIntersects();
+});
 
 draw();
