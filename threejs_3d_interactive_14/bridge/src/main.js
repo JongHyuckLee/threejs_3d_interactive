@@ -10,7 +10,8 @@ import { Glass } from "./Glass";
 import { Player } from "./Player";
 import gsap from "gsap";
 // ----- 주제: The Bridge 게임 만들기
-
+let fail = false;
+let jumping = false;
 // Renderer
 const canvas = document.querySelector("#three-canvas");
 const renderer = new THREE.WebGLRenderer({
@@ -244,15 +245,25 @@ function draw() {
 
   objects.forEach((item) => {
     if (item.cannonBody) {
+      if (item.name === "player") {
+        item.mesh.position.copy(item.cannonBody.position);
+        if (fail) {
+          item.mesh.quaternion.copy(item.cannonBody.quaternion);
+        }
+        if (item.modelMesh) {
+          item.modelMesh.position.copy(item.cannonBody.position);
+          if (fail) {
+            item.modelMesh.quaternion.copy(item.cannonBody.quaternion);
+          }
+        }
+        item.modelMesh.position.y += 0.15;
+      }
+    } else {
       item.mesh.position.copy(item.cannonBody.position);
       item.mesh.quaternion.copy(item.cannonBody.quaternion);
       if (item.modelMesh) {
         item.modelMesh.position.copy(item.cannonBody.position);
         item.modelMesh.quaternion.copy(item.cannonBody.quaternion);
-
-        if (item.name === "player") {
-          item.modelMesh.position.y += 0.15;
-        }
       }
     }
   });
@@ -272,15 +283,26 @@ function setSize() {
 
 function checkClickedObject(mesh) {
   if (mesh.name.indexOf("glass") >= 0) {
+    if (jumping || fail) return;
+
     if (mesh.step - 1 === cm2.step) {
+      jumping = true;
       cm2.step++;
 
       switch (mesh.type) {
         case "normal":
+          setTimeout(() => {
+            fail = true;
+          }, 700);
           break;
         case "strong":
           break;
       }
+
+      const timerId = setTimeout(() => {
+        jumping = false;
+      }, 1000);
+
       gsap.to(player.cannonBody.position, {
         duration: 1,
         x: mesh.position.x,
