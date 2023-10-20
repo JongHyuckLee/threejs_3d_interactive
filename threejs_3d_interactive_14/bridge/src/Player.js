@@ -5,8 +5,13 @@ import { cm1, geo, mat } from "./common";
 export class Player extends Stuff {
   constructor(info) {
     super(info);
+
+    this.width = 0.5;
+    this.height = 0.5;
+    this.depth = 0.5;
+
     this.mesh = new Mesh(
-      new BoxGeometry(0.5, 0.5, 0.5),
+      new BoxGeometry(this.width, this.height, this.height),
       new MeshBasicMaterial({
         transparent: true,
         opacity: 0,
@@ -36,6 +41,8 @@ export class Player extends Stuff {
       this.actions[2].repetitions = 1;
       console.log(this.actions);
       this.actions[0].play();
+
+      this.setCannonBody();
     });
     // this.mesh = new Mesh(this.geometry, this.material);
     // this.mesh.position.set(this.x, this.y, this.z);
