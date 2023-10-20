@@ -178,6 +178,10 @@ for (let i = 0; i < 49; i++) {
 // 유리판
 let glassTypeNumber = 0;
 let glassTypes = [];
+const glassZ = [];
+for (let i = 0; i < numberOfGlass; i++) {
+  glassZ.push(-(i * glassUnitSize * 2 - 9 * glassUnitSize));
+}
 for (let i = 0; i < numberOfGlass; i++) {
   glassTypeNumber = Math.round(Math.random());
 
@@ -190,18 +194,20 @@ for (let i = 0; i < numberOfGlass; i++) {
       break;
   }
   const glass1 = new Glass({
+    step: i + 1,
     name: `glass-${glassTypes[0]}`,
     x: -1,
     y: 10.5,
-    z: i * glassUnitSize * 2 - 9 * glassUnitSize,
+    z: glassZ[i],
     type: glassTypes[0],
     cannonMaterial: cm1.glassMaterial,
   });
   const glass2 = new Glass({
+    step: i + 1,
     name: `glass-${glassTypes[1]}`,
     x: 1,
     y: 10.5,
-    z: i * glassUnitSize * 2 - 9 * glassUnitSize,
+    z: glassZ[i],
     type: glassTypes[1],
     cannonMaterial: cm1.glassMaterial,
   });
@@ -264,8 +270,11 @@ function setSize() {
   renderer.render(cm1.scene, camera);
 }
 
-function checkClickedObject(objectName) {
-  if (objectName.indexOf("glass") >= 0) {
+function checkClickedObject(mesh) {
+  if (mesh.name.indexOf("glass") >= 0) {
+    if (mesh.step - 1 === cm2.step) {
+      cm2.step++;
+    }
   }
 }
 
@@ -274,7 +283,7 @@ function checkIntersects() {
   const intersects = raycaster.intersectObjects(cm1.scene.children);
 
   for (const item of intersects) {
-    checkClickedObject(item.object.name);
+    checkClickedObject(item.object);
     break;
   }
 }
