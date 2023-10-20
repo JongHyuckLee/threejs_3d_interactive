@@ -8,7 +8,7 @@ import { Bar } from "./Bar";
 import { SideLight } from "./SideLight";
 import { Glass } from "./Glass";
 import { Player } from "./Player";
-
+import gsap from "gsap";
 // ----- 주제: The Bridge 게임 만들기
 
 // Renderer
@@ -274,6 +274,22 @@ function checkClickedObject(mesh) {
   if (mesh.name.indexOf("glass") >= 0) {
     if (mesh.step - 1 === cm2.step) {
       cm2.step++;
+
+      switch (mesh.type) {
+        case "normal":
+          break;
+        case "strong":
+          break;
+      }
+      gsap.to(player.cannonBody.position, {
+        duration: 1,
+        x: mesh.position.x,
+        z: glassZ[cm2.step - 1],
+      });
+      gsap.to(player.cannonBody.position, {
+        duration: 0.4,
+        y: 12,
+      });
     }
   }
 }
