@@ -286,6 +286,8 @@ function checkClickedObject(mesh) {
     if (jumping || fail) return;
 
     if (mesh.step - 1 === cm2.step) {
+      player.actions[2].stop();
+      player.actions[2].play();
       jumping = true;
       cm2.step++;
 
@@ -293,6 +295,8 @@ function checkClickedObject(mesh) {
         case "normal":
           setTimeout(() => {
             fail = true;
+            player.actions[0].stop();
+            player.actions[1].play();
           }, 700);
           break;
         case "strong":
