@@ -159,21 +159,25 @@ const bar4 = new Bar({
   y: 10.3,
   z: 0,
 });
-
+const sideLights = [];
 for (let i = 0; i < 49; i++) {
-  new SideLight({
-    name: "sideLight",
-    container: bar1.mesh,
-    z: i * 0.5 - glassUnitSize * 10, // glass unit size 10개보다 z축으로 - 된 값 부터 시작해야 한다. 글래스가 10개이기 때문이다.,
-  });
+  sideLights.push(
+    new SideLight({
+      name: "sideLight",
+      container: bar1.mesh,
+      z: i * 0.5 - glassUnitSize * 10, // glass unit size 10개보다 z축으로 - 된 값 부터 시작해야 한다. 글래스가 10개이기 때문이다.,
+    })
+  );
 }
 
 for (let i = 0; i < 49; i++) {
-  new SideLight({
-    name: "sideLight",
-    container: bar4.mesh,
-    z: i * 0.5 - glassUnitSize * 10, // glass unit size 10개보다 z축으로 - 된 값 부터 시작해야 한다. 글래스가 10개이기 때문이다.,
-  });
+  sideLights.push(
+    new SideLight({
+      name: "sideLight",
+      container: bar4.mesh,
+      z: i * 0.5 - glassUnitSize * 10, // glass unit size 10개보다 z축으로 - 된 값 부터 시작해야 한다. 글래스가 10개이기 때문이다.,
+    })
+  );
 }
 
 // 유리판
@@ -257,13 +261,13 @@ function draw() {
           }
         }
         item.modelMesh.position.y += 0.15;
-      }
-    } else {
-      item.mesh.position.copy(item.cannonBody.position);
-      item.mesh.quaternion.copy(item.cannonBody.quaternion);
-      if (item.modelMesh) {
-        item.modelMesh.position.copy(item.cannonBody.position);
-        item.modelMesh.quaternion.copy(item.cannonBody.quaternion);
+      } else {
+        item.mesh.position.copy(item.cannonBody.position);
+        item.mesh.quaternion.copy(item.cannonBody.quaternion);
+        if (item.modelMesh) {
+          item.modelMesh.position.copy(item.cannonBody.position);
+          item.modelMesh.quaternion.copy(item.cannonBody.quaternion);
+        }
       }
     }
   });
@@ -297,6 +301,9 @@ function checkClickedObject(mesh) {
             fail = true;
             player.actions[0].stop();
             player.actions[1].play();
+            sideLights.forEach((item) => {
+              item.turnOff();
+            });
           }, 700);
           break;
         case "strong":
