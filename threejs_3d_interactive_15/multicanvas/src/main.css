@@ -9,7 +9,7 @@ li {
   left: 0;
   top: 0;
   z-index: -1;
-  background: gray;
+  background: white;
 }
 .view-item {
   display: flex;
